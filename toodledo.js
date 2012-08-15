@@ -1,53 +1,86 @@
 var Toodledo = (function() { 
-    var d=top.document,
-        l=d.location,
-        e=encodeURIComponent,
-        width = 540,
-        height = 400,     
+    var d = top.document,
+        host = 'http://dev.toodledo.com',
+        host_m = 'http://m.toodledo.com',
+        quickAddUrl = 'http://beta.toodledo.com/tools/quickadd.php',
         byId=function(el) { return d.getElementById(el) };
             
-    var t = function() {
-        var w=window,   
-            ua=w.navigator.userAgent,
-            host="http://dev.toodledo.com",
-            host_m="http://m.toodledo.com";
-    };    
-    t.init = function () {
-        var oldWrap = byId('t_wrap');
-        if(oldWrap) body.removeChild(oldWrap);
+    init = function () {
+        var a = byId('t_wrap'),
+            css = d.createElement('link'),
+            body = d.getElementsByTagName('body')[0],
+            head = d.getElementsByTagName("head")[0],
+            wrap = d.createElement('div'),
+            topFrame = d.createElement('div'),
+            iframe = d.createElement('iframe');
         
-        //creating wrap
-        var body = d.getElementsByTagName('body')[0];
-        var wrap = d.createElement('div');        
-        var topFrame = d.createElement('div');       
-        var iframe = d.createElement('iframe'); 
+        if(a) d.body.removeChild(a);
+        
+        head.appendChild(css);
+        css.rel = 'stylesheet';
+        css.type = 'text/css';
+        css.href = host + '/style.css';
+        
         wrap.id = 't_wrap';
         topFrame.id = 't_head';
         topFrame.innerHTML = '<h2>Toodledo.com</h2>';
-        iframe.src = 'http://beta.toodledo.com/tools/quickadd.php';
+        iframe.src = quickAddUrl;
         iframe.id = 't_iframe';
         iframe.frameBorder = 0;
         
         body.appendChild(wrap);
-        
-        byId('t_wrap').innerHTML = '<style type="text/css">#t_wrap{border:1px solid #999;top:0;right:0;visibility:hidden;position:fixed;width:'+width+'px;height:'+(height+21)+'px;top:0;z-index:99999;}#t_iframe{width:'+width+'px;height:'+height+'px;border:0;margin:0;padding:0;background:#f1f5f8;}#t_head{border-bottom:1px solid #999;background:#e4e5e0;color:#000;}#t_head h2{font:bold 13px/20px Arial,sans-serif;text-align:center;margin:0;}</style>';       
+                      
         wrap.appendChild(topFrame);        
         wrap.appendChild(iframe);
-        wrap.style.visibility = 'visible';        
+        
+        show(); 
+        listen( window, 'message', listener);
     };    
-    t.setValues = function () {
-        notesField.value = e(l.href);
+    listen = function( obj, event, callback ) {
+        if (window.addEventListener){
+            obj.addEventListener(event, callback, false);
+        } else {
+            obj.attachEvent('on' + event, callback);
+        }
     };
-    t.hideOverlay = function () {
-        var a = byId("t_overlay");
-        a.parentNode.removeChild(a);
-    },
-    t.savedFailure = function ( msg ) {
-        console.log(msg);    
-    },
-    t.savedSuccess = function () {
-        console.log("Task Saved!");
+    listener = function() {
+        if (( event.origin == 'http://beta.toodledo.com' ) && (event.data == 'pass')) {
+           showViewAllTasks(); 
+           hide();
+        }
     };
-    t.init();
-    
+    showViewAllTasks = function() {
+        var viewTasks = d.createElement('div'),
+            a = byId('t_wrap');
+        a.style.height = '200px';
+        a.removeChild(byId('t_iframe'));
+        a.appendChild(viewTasks);
+        viewTasks.id = 't_viewTasks';
+        
+        viewTasks.innerHTML = '<a id="openTasks">View Tasks<img src="'+host+'/viewtasks.png" /></a> <h2>Task Added.</h2>';
+        
+        listen(byId('openTasks'), 'click', openTasks); 
+        
+    };
+    openTasks = function () {
+        window.open(host_m, '_blank', 'height=480, width=320, scrollbars=0')
+    };
+    show = function () {
+        var a = byId('t_wrap'),
+            b = byId('t_iframe');
+        setTimeout(function () {
+            a.style.visibility = 'visible';
+            a.style.height = '250px';
+            b.style.display = 'block';  
+        }, 300);      
+    };
+    hide = function () {
+        var a = byId('t_wrap');
+        setTimeout(function () {
+            a.style.height = '0';
+            a.style.visibility = 'hidden';  
+            d.body.removeChild(a);          
+        }, 5000);
+    };    
+    init();    
 })();
