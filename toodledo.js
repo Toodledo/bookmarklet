@@ -63,7 +63,7 @@ var Toodledo = (function() {
             obj.attachEvent('on' + event, callback);
         }
     };
-    listener = function() {
+    listener = function( event ) {
         var val = event.data,
             o = event.origin;      
             
