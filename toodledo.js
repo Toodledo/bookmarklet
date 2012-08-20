@@ -6,7 +6,7 @@ var Toodledo = (function() {
         host_m='http://m.toodledo.com',
         quickAddHost='https://www.toodledo.com',
         quickAddUrl=quickAddHost + '/tools/quickadd.php';
-        instructionsUrl=quickAddHost + '/tools/instructions.php';
+        instructionsUrl=quickAddHost + '/tools/quickadd.php';
             
     init = function ( instructions ) {
         var loadInstructions  = (typeof instructions != 'undefined' ) ? true : false;
