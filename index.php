@@ -11,6 +11,6 @@
     </script>	
 </head>
 <body>
-    <a href="javascript:(function(){var w=window,d = w.top.document,t=top.js; if(t && t.document) d = t.document; var s = d.createElement('script');d.task_script = s; s.src = 'http://dev.toodledo.com/toodledo.js';d.getElementsByTagName('head')[0].appendChild(s);})(); void(0);">Add Task</a>
+    <a href="javascript:(function(){var w=window,d = w.top.document,s = d.createElement('script');d.tdl_script = s; s.src = 'https://dev.toodledo.com/toodledo.js';d.getElementsByTagName('head')[0].appendChild(s);})(); void(0);">Add Task</a>
 </body>
 </html>
